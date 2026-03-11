@@ -764,7 +764,7 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     
     # Left: Image/Icon with border (square)
     result_image_frame = tk.Frame(result_main_frame, bg="#f3f4f6", width=220, height=220, relief="solid", bd=1)
-    result_image_frame.pack(side="left", padx=(10, 0), pady=10)
+    result_image_frame.pack(side="left", padx=(10, 0), pady=10, anchor="n")
     result_image_frame.pack_propagate(False)
     
     result_label = tk.Label(
@@ -778,7 +778,7 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     
     # Right: Status Information
     result_info_container = tk.Frame(result_main_frame, bg="white")
-    result_info_container.pack(side="left", fill="both", expand=True, padx=25)
+    result_info_container.pack(side="left", fill="both", expand=True, padx=25, anchor="n")
     
     # Status Badge
     result_status_frame = tk.Frame(result_info_container, bg="white", relief="solid", bd=1)
