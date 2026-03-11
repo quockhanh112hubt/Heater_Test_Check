@@ -75,6 +75,11 @@ def cancel():
 def open_settings():
     """Mở cửa sổ Settings"""
     settings_window = tk.Toplevel(root)
+    try:
+        icon_path = os.path.join(os.path.dirname(__file__), "Resource", "ico.ico")
+        settings_window.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Warning: Could not set window icon: {e}")
     settings_window.title("⚙️ Settings - Configuration")
     settings_window.geometry("700x650")
     settings_window.configure(bg='#f5f7fa')
@@ -296,6 +301,11 @@ def create_login_ui():
     global root, option_var
 
     root = tk.Tk()
+    try:
+        icon_path = os.path.join(os.path.dirname(__file__), "Resource", "ico.ico")
+        root.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Warning: Could not set window icon: {e}")
     root.title(f"Heater Test DCR Checker Version {get_current_version()}")
     root.geometry("660x600")
     root.configure(bg='#00a99d')

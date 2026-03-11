@@ -1,4 +1,5 @@
 import tkinter as tk
+import os
 from tkinter import font, ttk, messagebox
 # from log import log_message
 from PIL import Image, ImageTk
@@ -460,6 +461,11 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     def open_settings():
         """Mở cửa sổ Settings"""
         settings_window = tk.Toplevel(root_P230)
+        try:
+            icon_path = os.path.join(os.path.dirname(__file__), "Resource", "ico.ico")
+            settings_window.iconbitmap(icon_path)
+        except Exception as e:
+            print(f"Warning: Could not set window icon: {e}")
         settings_window.title("⚙️ Settings - Configuration")
         settings_window.geometry("700x650")
         settings_window.configure(bg='#f5f7fa')
@@ -576,6 +582,11 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
 
     # ==================== MAIN WINDOW ====================
     root_P230 = tk.Tk()
+    try:
+        icon_path = os.path.join(os.path.dirname(__file__), "Resource", "ico.ico")
+        root_P230.iconbitmap(icon_path)
+    except Exception as e:
+        print(f"Warning: Could not set window icon: {e}")
     root_P230.title("HEATER Function Checker - Model P230")
     root_P230.geometry("1400x900")
     root_P230.configure(bg="#f5f7fa")
