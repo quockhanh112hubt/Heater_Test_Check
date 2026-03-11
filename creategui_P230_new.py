@@ -7,6 +7,7 @@ import pyodbc
 from datetime import datetime
 import threading
 from config_manager import get_sql_connection_string, get_oracle_connection_params, load_config, save_config
+import pygame
 
 
 def connect_to_database():
@@ -217,6 +218,9 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
             status_text = "✗ FAILED"
             status_bg = "#fee2e2"
         
+        # Play sound based on result
+        play_result_sound(result)
+
         # Show image or icon
         if img:
             result_label.config(image=img, bg="#f3f4f6")
@@ -358,8 +362,9 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
             messagebox.showwarning("Cảnh báo", "Vui lòng nhập HEATER QR Code!")
             return
         
-        # Show loading state
-        result_label.config(text="Đang kiểm tra...", image='')
+        # Show loading state (clear previous image)
+        result_label.config(text="Đang kiểm tra...", image='', bg="#f3f4f6", fg="#9ca3af")
+        result_label.image = None
         HEATER_label.config(text="Loading...")
         root_P230.update_idletasks()
         
@@ -582,14 +587,34 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     style = ttk.Style()
     style.theme_use('clam')
     
-    # Pre-load images with smaller size
+    # Pre-load images with larger size for emphasis
     try:
-        ok_image = ImageTk.PhotoImage(Image.open(r"Resource\Ok.png").resize((120, 120)))
-        ng_image = ImageTk.PhotoImage(Image.open(r"Resource\NG.png").resize((120, 120)))
+        ok_image = ImageTk.PhotoImage(Image.open(r"Resource\Ok.png").resize((200, 200)))
+        ng_image = ImageTk.PhotoImage(Image.open(r"Resource\NG.png").resize((200, 200)))
     except:
         ok_image = None
         ng_image = None
         print("Warning: Could not load images")
+
+    # Initialize sound system
+    sound_enabled = True
+    try:
+        pygame.mixer.init()
+    except Exception as e:
+        sound_enabled = False
+        print(f"Warning: Could not initialize sound system: {e}")
+
+    def play_result_sound(result):
+        if not sound_enabled:
+            return
+        try:
+            if result == 'PASS':
+                pygame.mixer.music.load(r"Resource\OK.mp3")
+            else:
+                pygame.mixer.music.load(r"Resource\NG.mp3")
+            pygame.mixer.music.play()
+        except Exception as e:
+            print(f"Warning: Could not play sound: {e}")
 
     # ==================== MENU BAR ====================
     menubar = tk.Menu(root_P230)
@@ -628,7 +653,7 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     subtitle_label = tk.Label(
         header_content,
         text="Model P230 - Production Testing System",
-        font=("Segoe UI", 12),
+        font=("Segoe UI", 14),
         bg="#1e3a8a",
         fg="#93c5fd"
     )
@@ -691,12 +716,12 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
 
     # ==================== RESULT CARD ====================
     result_card = ModernCard(left_panel, title="📊 Test Result")
-    result_card.pack(fill="x", pady=(0, 15))
+    result_card.pack(fill="both", expand=True, pady=(0, 15))
     
     result_content = result_card.get_content_frame()
     
     # Fixed height container to prevent expansion
-    result_container = tk.Frame(result_content, bg="white", height=200)
+    result_container = tk.Frame(result_content, bg="white", height=320)
     result_container.pack(fill="x")
     result_container.pack_propagate(False)  # Prevent auto-resize
     
@@ -726,15 +751,15 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     result_main_frame = tk.Frame(result_container, bg="white")
     result_main_frame.pack(fill="both", expand=True, pady=5)
     
-    # Left: Image/Icon with border
-    result_image_frame = tk.Frame(result_main_frame, bg="#f3f4f6", width=140, relief="solid", bd=1)
-    result_image_frame.pack(side="left", fill="y", padx=(10, 0))
+    # Left: Image/Icon with border (square)
+    result_image_frame = tk.Frame(result_main_frame, bg="#f3f4f6", width=220, height=220, relief="solid", bd=1)
+    result_image_frame.pack(side="left", padx=(10, 0), pady=10)
     result_image_frame.pack_propagate(False)
     
     result_label = tk.Label(
         result_image_frame,
         text="Ready",
-        font=("Segoe UI", 12),
+        font=("Segoe UI", 14),
         bg="#f3f4f6",
         fg="#9ca3af"
     )
@@ -742,7 +767,7 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     
     # Right: Status Information
     result_info_container = tk.Frame(result_main_frame, bg="white")
-    result_info_container.pack(side="left", fill="both", expand=True, padx=15)
+    result_info_container.pack(side="left", fill="both", expand=True, padx=25)
     
     # Status Badge
     result_status_frame = tk.Frame(result_info_container, bg="white", relief="solid", bd=1)
@@ -751,10 +776,10 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     result_status_label = tk.Label(
         result_status_frame,
         text="",
-        font=("Segoe UI", 18, "bold"),
+        font=("Segoe UI", 24, "bold"),
         bg="white",
         fg="#6b7280",
-        pady=8
+        pady=10
     )
     result_status_label.pack(anchor="w", padx=15)
     
@@ -1018,7 +1043,9 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
 
     # ==================== LOG CARD ====================
     log_card = ModernCard(left_panel, title="📝 Activity Log")
-    log_card.pack(fill="both", expand=True)
+    log_card.configure(height=220)
+    log_card.pack(fill="x")
+    log_card.pack_propagate(False)
     
     log_content = log_card.get_content_frame()
     
@@ -1030,7 +1057,7 @@ def create_gui_P230(create_login_ui, create_gui_P1, create_gui_P4):
     
     log_text = tk.Text(
         log_frame,
-        height=8,
+        height=5,
         font=("Consolas", 9),
         bg="#1e1e1e",
         fg="#d4d4d4",
