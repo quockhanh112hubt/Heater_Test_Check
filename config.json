@@ -1,0 +1,26 @@
+{
+    "update": {
+        "program_directory": "C:\\Heater_Test_Check",
+        "ftp_server": "10.62.102.5",
+        "ftp_username": "update",
+        "ftp_password": "update",
+        "update_path": "/KhanhDQ/Update_Program/Heater_Test_Check/"
+    },
+    "database": {
+        "sql_server": {
+            "driver": "ODBC Driver 17 for SQL Server",
+            "server": "10.162.200.32",
+            "port": "1433",
+            "database": "ITMV_KTNG_DB",
+            "username": "ITMV_KTNG",
+            "password": "!itm@semi!12"
+        },
+        "oracle": {
+            "host": "10.162.200.20",
+            "port": "1521",
+            "service_name": "ITMVPACKMES",
+            "username": "mighty",
+            "password": "mighty"
+        }
+    }
+}
